@@ -1,13 +1,14 @@
 import React from 'react';
 import {Routes, Route, Navigate} from "react-router-dom";
+import {useTypedSelector} from "../hooks/useTypedSelector";
 import Login from "../pages/Login";
 import Event from "../pages/Event";
 
 const AppRouter = () => {
-    const auth = false;
-    
+    const { isAuth } = useTypedSelector(state => state.auth);
+
     return (
-        auth ?
+        isAuth ?
             <Routes>
                 <Route path="/" element={<Event/>}/>
                 <Route

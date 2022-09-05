@@ -1,10 +1,44 @@
-import React from 'react';
+import {Button, Layout, Modal, Row} from "antd";
+import React, {useEffect, useState} from 'react';
+import EventCalendar from "../components/EventCalendar";
+import EventForm from "../components/EventForm";
+import {useActions} from "../hooks/useActions";
+import {useTypedSelector} from "../hooks/useTypedSelector";
+import {IEvent} from "../models/IEvent";
 
 const Event = () => {
+    const {fetchGuests, createEvent, fetchEvents} = useActions();
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const { guests, events } = useTypedSelector(state => state.event);
+    const { user } = useTypedSelector(state => state.auth);
+
+    useEffect(() => {
+        fetchGuests();
+        fetchEvents(user.username);
+    }, []);
+
+    const addNewEvent = (event: IEvent) => {
+        setModalVisible(false);
+        createEvent(event)
+    };
+
     return (
-        <div>
-            Event
-        </div>
+        <Layout>
+            <EventCalendar events={events}/>
+            <Row justify="center">
+                <Button onClick={() => setModalVisible(true)}>Add event</Button>
+            </Row>
+            <Modal
+                title="Add event"
+                visible={modalVisible}
+                footer={null}
+                onCancel={() => setModalVisible(false)}
+            >
+                <EventForm guests={guests} submit={addNewEvent} />
+            </Modal>
+        </Layout>
     );
 };
 
